@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+
+<style>
+:root{
+  --primary:#2563eb;
+  --secondary:#1e40af;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial,sans-serif;
+  background:linear-gradient(135deg,#eef2ff,#f8fafc);
+  transition:.3s;
+}
+
+/* ================= NAVBAR ================= */
+.navbar{
+  height:70px;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 30px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.navbar h2{
+  margin:0;
+  font-size:22px;
+}
+
+.navbar-right{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.toggle{
+  cursor:pointer;
+  font-size:24px;
+}
+
+.navbar img{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  cursor:pointer;
+  border:2px solid #fff;
+}
+
+/* ================= DROPDOWN ================= */
+.dropdown{position:relative;}
+.dropdown-content{
+  display:none;
+  position:absolute;
+  right:0;
+  top:60px;
+  background:white;
+  border-radius:12px;
+  min-width:170px;
+  overflow:hidden;
+  box-shadow:0 15px 40px rgba(0,0,0,.2);
+}
+.dropdown-content a{
+  padding:14px 18px;
+  display:block;
+  text-decoration:none;
+  color:#333;
+  font-weight:500;
+}
+.dropdown-content a:hover{
+  background:#f1f5f9;
+}
+.dropdown:hover .dropdown-content{
+  display:block;
+}
+
+/* ================= DASHBOARD ================= */
+.container{
+  width:92%;
+  max-width:1300px;
+  margin:40px auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(8px);
+  padding:45px 25px;
+  border-radius:22px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 20px 40px rgba(0,0,0,.08);
+  transition:.4s ease;
+  position:relative;
+}
+
+.card:hover{
+  transform:translateY(-10px) scale(1.03);
+  box-shadow:0 30px 60px rgba(0,0,0,.15);
+}
+
+.icon{
+  font-size:60px;
+  margin-bottom:18px;
+}
+
+.card h3{
+  margin:0;
+  font-size:21px;
+  color:var(--primary);
+}
+
+.card p{
+  margin-top:10px;
+  font-size:14px;
+  color:#64748b;
+}
+
+/* ================= DARK MODE ================= */
+body.dark{
+  background:linear-gradient(135deg,#020617,#020617);
+  color:#e5e7eb;
+}
+
+body.dark .navbar{
+  background:linear-gradient(135deg,#020617,#020617);
+}
+
+body.dark .card{
+  background:rgba(15,23,42,.9);
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
+}
+
+body.dark .card h3{color:#e5e7eb;}
+body.dark .card p{color:#cbd5f5;}
+
+body.dark .dropdown-content{
+  background:#020617;
+}
+body.dark .dropdown-content a{
+  color:#e5e7eb;
+}
+body.dark .dropdown-content a:hover{
+  background:#020617;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:600px){
+  .navbar h2{font-size:18px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<div class="navbar">
+  <h2>📚 Admin Dashboard</h2>
+
+  <div class="navbar-right">
+    <span class="toggle" onclick="toggleMode()" id="modeIcon">🌙</span>
+
+    <div class="dropdown">
+      <img src="{{ url_for('static', filename='profile_pictures/admin.jpg') }}">
+      <div class="dropdown-content">
+        <a href="{{ url_for('admin_profile') }}">👤 Profile</a>
+        <a href="{{ url_for('logout') }}">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div class="container">
+
+  <div class="card" onclick="location.href='{{ url_for('admin_student_results') }}'">
+    <div class="icon">📊</div>
+    <h3>Student Results</h3>
+    <p>View & manage all results</p>
+  </div>
+
+  <div class="card" onclick="location.href='{{ url_for('admin_view_students') }}'">
+    <div class="icon">👥</div>
+    <h3>Students</h3>
+    <p>All registered students</p>
+  </div>
+
+  <div class="card" onclick="location.href='{{ url_for('admin_password_requests') }}'">
+    <div class="icon">🔑</div>
+    <h3>Password Requests</h3>
+    <p>Reset & approvals</p>
+  </div>
+
+  <div class="card" onclick="location.href='{{ url_for('admin_student_results') }}'">
+    <div class="icon">📝</div>
+    <h3>Results Management</h3>
+    <p>Edit & publish results</p>
+  </div>
+
+  <div class="card" onclick="location.href='{{ url_for('admin_fees') }}'">
+    <div class="icon">💰</div>
+    <h3>Fees Management</h3>
+    <p>Payments & records</p>
+  </div>
+
+</div>
+
+<!-- ================= JS ================= -->
+<script>
+function toggleMode(){
+  document.body.classList.toggle("dark");
+
+  if(document.body.classList.contains("dark")){
+    localStorage.setItem("mode","dark");
+    document.getElementById("modeIcon").innerHTML="☀️";
+  }else{
+    localStorage.setItem("mode","light");
+    document.getElementById("modeIcon").innerHTML="🌙";
+  }
+}
+
+window.onload=function(){
+  if(localStorage.getItem("mode")==="dark"){
+    document.body.classList.add("dark");
+    document.getElementById("modeIcon").innerHTML="☀️";
+  }
+}
+</script>
+
+</body>
+</html>
