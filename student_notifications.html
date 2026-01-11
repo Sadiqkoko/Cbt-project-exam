@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Notifications - Alhuda Cyber Cafe Academy</title>
+<style>
+body{font-family:Arial,sans-serif; background:#f4f4f9; margin:0; padding:20px;}
+.container{max-width:700px; margin:50px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+h2{text-align:center; color:#333;}
+.notification{border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:5px;}
+.approved{background:#d4edda; color:#155724;}
+.rejected{background:#f8d7da; color:#721c24;}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Your Notifications</h2>
+{% if notifications %}
+    {% for n in notifications %}
+        <div class="notification {% if n.status == 'Approved' %}approved{% elif n.status == 'Rejected' %}rejected{% endif %}">
+            <p>Status: <strong>{{ n.status }}</strong></p>
+            {% if n.status == 'Approved' %}
+                <p>Your password reset request has been approved. You can now login with your new password.</p>
+            {% elif n.status == 'Rejected' %}
+                <p>Your password reset request has been rejected.</p>
+                <p>Reason: {{ n.reason }}</p>
+            {% endif %}
+            <p>Date: {{ n.decision_date }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No notifications found.</p>
+{% endif %}
+</div>
+</body>
+</html>

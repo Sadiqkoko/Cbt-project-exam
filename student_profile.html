@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Profile - Alhuda Cyber Cafe Academy</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 90%;
+    max-width: 800px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 20px;
+    border: 3px solid #007BFF;
+}
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+.info-card {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    margin: 10px 0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.info-card span.label {
+    font-weight: bold;
+    color: #555;
+}
+.info-card span.value {
+    color: #007BFF;
+}
+button {
+    display: block;
+    margin: 30px auto 0;
+    padding: 10px 20px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background: #0056b3;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <img src="{{ url_for('static', filename='profile_pictures/' + student['picture']) }}" class="profile-pic" alt="Profile Picture">
+    <h2>{{ student['fullname'] }}</h2>
+
+    <div class="info-card"><span class="label">Admission Number:</span><span class="value">{{ student['admission_number'] }}</span></div>
+    <div class="info-card"><span class="label">Email:</span><span class="value">{{ student['email'] if student['email'] else 'Not Provided' }}</span></div>
+    <div class="info-card"><span class="label">Date of Birth:</span><span class="value">{{ student['dob'] }}</span></div>
+    <div class="info-card"><span class="label">Phone:</span><span class="value">{{ student['phone'] }}</span></div>
+    <div class="info-card"><span class="label">NIN:</span><span class="value">{{ student['nin'] }}</span></div>
+    <div class="info-card"><span class="label">Gender:</span><span class="value">{{ student['gender'] }}</span></div>
+    <div class="info-card"><span class="label">Country:</span><span class="value">{{ student['country'] }}</span></div>
+    <div class="info-card"><span class="label">State:</span><span class="value">{{ student['state'] }}</span></div>
+    <div class="info-card"><span class="label">LGA:</span><span class="value">{{ student['lga'] }}</span></div>
+    <div class="info-card"><span class="label">Address:</span><span class="value">{{ student['address'] }}</span></div>
+    <div class="info-card"><span class="label">Faculty:</span><span class="value">{{ student['faculty'] }}</span></div>
+    <div class="info-card"><span class="label">Department:</span><span class="value">{{ student['department'] }}</span></div>
+    <div class="info-card"><span class="label">Level:</span><span class="value">{{ student['level'] }}</span></div>
+    <div class="info-card"><span class="label">Session:</span><span class="value">{{ student['session'] }}</span></div>
+
+    <a href="{{ url_for('student_dashboard') }}"><button>Back to Dashboard</button></a>
+</div>
+</body>
+</html>

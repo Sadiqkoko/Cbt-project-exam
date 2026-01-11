@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ student.fullname }} - Exam Results</title>
+<style>
+body {font-family: Arial, sans-serif; background:#f4f4f9; margin:0; padding:0;}
+.container {width:90%; max-width:1000px; margin:50px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.1);}
+h2 {text-align:center; color:#333; margin-bottom:10px;}
+.back-btn {display:inline-block; margin-bottom:20px; padding:8px 15px; background:#007BFF; color:white; border-radius:6px; text-decoration:none; transition:0.3s;}
+.back-btn:hover {background:#0056b3;}
+.profile {text-align:center; margin-bottom:20px;}
+.profile img {width:100px; height:100px; border-radius:50%; object-fit:cover;}
+table {width:100%; border-collapse:collapse; margin-top:20px;}
+th, td {padding:10px; text-align:center; border-bottom:1px solid #ddd;}
+th {background:#007BFF; color:white;}
+tr:hover {background:#f1f1f1;}
+.badge {padding:5px 10px; border-radius:12px; color:white; font-size:12px;}
+.correct {background:#28a745;}
+.wrong {background:#dc3545;}
+.notanswered {background:#ffc107;}
+.status-pending {color:orange; font-weight:bold;}
+.status-approved {color:green; font-weight:bold;}
+.status-rejected {color:red; font-weight:bold;}
+.summary {display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:15px; margin-top:15px;}
+.summary-box {text-align:center; padding:10px; border-radius:10px; background:#f0f8ff;}
+.filter-section {display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;}
+.filter-section input, .filter-section select {padding:8px; border-radius:6px; border:1px solid #ccc;}
+.card {margin-bottom:25px; border:1px solid #ddd; border-radius:10px; padding:15px; background:#f9f9f9;}
+</style>
+</head>
+<body>
+<div class="container">
+    <!-- Back Button -->
+    <a href="{{ url_for('student_dashboard') }}" class="back-btn">← Back to Dashboard</a>
+
+    <h2>Exam Results</h2>
+    <div class="profile">
+        <img src="{{ url_for('static', filename='profile_pictures/' + student['picture']) }}" alt="Profile">
+        <h3>{{ student['fullname'] }}</h3>
+        <p>Admission Number: {{ student['admission_number'] }}</p>
+        <p>Level: {{ student['level'] }} | Session: {{ student['session'] }}</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-section">
+        <input type="text" id="courseSearch" placeholder="Search Course..." onkeyup="filterCourses()">
+        <select id="statusFilter" onchange="filterCourses()">
+            <option value="All">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+        <select id="sortSelect" onchange="sortCourses()">
+            <option value="code-asc">Course Code A-Z</option>
+            <option value="code-desc">Course Code Z-A</option>
+            <option value="percentage-desc">Percentage High → Low</option>
+            <option value="percentage-asc">Percentage Low → High</option>
+            <option value="gpa-desc">GPA High → Low</option>
+            <option value="gpa-asc">GPA Low → High</option>
+            <option value="status">Status (Pending → Approved → Rejected)</option>
+        </select>
+    </div>
+
+    {% for cr in student_results %}
+    <div class="card" 
+         data-course-code="{{ cr.course.course_code|lower }}" 
+         data-status="{{ cr.status }}" 
+         data-percentage="{{ cr.percentage }}" 
+         data-gpa="{{ cr.gpa }}">
+        <h3>{{ cr.course.course_code }} - {{ cr.course.course_title }}</h3>
+
+        {% if cr.status == "Pending" %}
+            <p style="color:orange; font-weight:bold;">Results Pending Approval</p>
+        {% else %}
+        <div class="summary">
+            <div class="summary-box"><strong>Total Questions:</strong> {{ cr.total_questions }}</div>
+            <div class="summary-box"><strong>Correct:</strong> {{ cr.results|selectattr("grade","equalto","Correct")|list|length }}</div>
+            <div class="summary-box"><strong>Wrong:</strong> {{ cr.results|selectattr("grade","equalto","Wrong")|list|length }}</div>
+            <div class="summary-box"><strong>Not Answered:</strong> {{ cr.results|selectattr("grade","equalto","Not Answered")|list|length }}</div>
+            <div class="summary-box"><strong>Percentage:</strong> {{ cr.percentage }}%</div>
+            <div class="summary-box"><strong>GPA:</strong> {{ cr.gpa }}</div>
+            <div class="summary-box"><strong>Status:</strong> <span class="status-{{ cr.status|lower }}">{{ cr.status }}</span>{% if cr.reason %} | Reason: {{ cr.reason }}{% endif %}</div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                    <th>Score</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for r in cr.results %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td style="text-align:left">{{ r.question_text }}</td>
+                    <td>{{ r.selected_answer or "N/A" }}</td>
+                    <td>{{ r.correct_answer }}</td>
+                    <td>{{ r.score }}</td>
+                    <td>
+                        {% if r.grade=="Correct" %}
+                            <span class="badge correct">Correct</span>
+                        {% elif r.grade=="Wrong" %}
+                            <span class="badge wrong">Wrong</span>
+                        {% else %}
+                            <span class="badge notanswered">Not Answered</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function filterCourses(){
+    const search = document.getElementById('courseSearch').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach(card => {
+        const code = card.dataset.courseCode;
+        const cardStatus = card.dataset.status;
+        const matchSearch = code.includes(search);
+        const matchStatus = (status=="All") ? true : cardStatus==status;
+        card.style.display = (matchSearch && matchStatus) ? "" : "none";
+    });
+}
+
+function sortCourses(){
+    const sortValue = document.getElementById('sortSelect').value;
+    const container = document.querySelector('.container');
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const statusOrder = { "Pending": 0, "Approved": 1, "Rejected": 2 };
+
+    cards.sort((a,b)=>{
+        const codeA = a.dataset.courseCode;
+        const codeB = b.dataset.courseCode;
+        const percA = parseFloat(a.dataset.percentage) || 0;
+        const percB = parseFloat(b.dataset.percentage) || 0;
+        const gpaA = parseFloat(a.dataset.gpa) || 0;
+        const gpaB = parseFloat(b.dataset.gpa) || 0;
+        const stA = a.dataset.status;
+        const stB = b.dataset.status;
+
+        switch(sortValue){
+            case "code-asc": return codeA.localeCompare(codeB);
+            case "code-desc": return codeB.localeCompare(codeA);
+            case "percentage-desc": return percB-percA;
+            case "percentage-asc": return percA-percB;
+            case "gpa-desc": return gpaB-gpaA;
+            case "gpa-asc": return gpaA-gpaB;
+            case "status": return statusOrder[stA]-statusOrder[stB];
+        }
+    });
+
+    cards.forEach(card => container.appendChild(card));
+    filterCourses();
+}
+</script>
+</body>
+</html>
