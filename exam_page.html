@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CBT Exam</title>
+<style>
+body{font-family:Arial;background:#f4f6fb}
+.top{display:flex;justify-content:space-between;padding:10px;background:#fff}
+.timer{color:red;font-weight:bold}
+.container{width:90%;margin:auto}
+.question{background:#fff;padding:15px;margin-top:15px;border-radius:8px}
+.nav{margin-top:10px}
+.nav button{margin:2px;padding:5px 10px}
+</style>
+
+<script>
+let time = 3600;
+function startTimer(){
+ setInterval(()=>{
+  let m = Math.floor(time/60);
+  let s = time%60;
+  document.getElementById("timer").innerHTML = m+":"+s;
+  time--;
+  if(time<=0) document.getElementById("examForm").submit();
+ },1000);
+}
+</script>
+</head>
+
+<body onload="startTimer()">
+<div class="top">
+<div>🧑 Student Exam</div>
+<div class="timer" id="timer">60:00</div>
+</div>
+
+<form method="POST" id="examForm">
+<div class="container">
+{% for q in questions %}
+<div class="question" id="q{{ loop.index }}">
+<p><b>Q{{ loop.index }}.</b> {{ q.question_text }}</p>
+<label><input type="radio" name="{{ q.id }}" value="A"> {{ q.option_a }}</label><br>
+<label><input type="radio" name="{{ q.id }}" value="B"> {{ q.option_b }}</label><br>
+<label><input type="radio" name="{{ q.id }}" value="C"> {{ q.option_c }}</label><br>
+<label><input type="radio" name="{{ q.id }}" value="D"> {{ q.option_d }}</label>
+</div>
+{% endfor %}
+
+<div class="nav">
+{% for i in range(1,61) %}
+<button type="button" onclick="location.href='#q{{i}}'">{{i}}</button>
+{% endfor %}
+</div>
+
+<button type="submit" style="margin-top:20px;padding:10px 20px">Submit Exam</button>
+</div>
+</form>
+</body>
+</html>

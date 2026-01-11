@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Payment Invoice - Alhuda Cyber Cafe Academy</title>
+<style>
+body {font-family: Arial, sans-serif; background:#f4f4f9; margin:0; padding:0;}
+.container {width:90%; max-width:800px; margin:50px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.1);}
+h2 {text-align:center; color:#333;}
+.profile {text-align:center; margin-bottom:20px;}
+.profile img {width:100px; height:100px; border-radius:50%; object-fit:cover;}
+table {width:100%; border-collapse:collapse;}
+th, td {padding:10px; text-align:center; border-bottom:1px solid #ddd;}
+th {background:#007BFF; color:white;}
+tr:hover {background:#f1f1f1;}
+.status-paid {color:green; font-weight:bold;}
+.status-pending {color:orange; font-weight:bold;}
+.status-overdue {color:red; font-weight:bold;}
+.back {margin-top:20px; display:block; text-decoration:none; color:#007BFF;}
+.back:hover {text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Payment Invoice</h2>
+<div class="profile">
+    <img src="{{ url_for('static', filename='profile_pictures/' + student['picture']) }}" alt="Profile">
+    <h3>{{ student['fullname'] }}</h3>
+    <p>Admission Number: {{ student['admission_number'] }}</p>
+    <p>Level: {{ student['level'] }} | Session: {{ student['session'] }}</p>
+</div>
+<table>
+<thead>
+<tr>
+    <th>Session</th>
+    <th>Amount</th>
+    <th>Status</th>
+    <th>Date Paid</th>
+</tr>
+</thead>
+<tbody>
+{% for f in fees %}
+<tr>
+    <td>{{ f['session'] }}</td>
+    <td>{{ f['amount'] }}</td>
+    <td class="status-{{ f['status']|lower }}">{{ f['status'] }}</td>
+    <td>{{ f['date_paid'] or 'N/A' }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<a href="{{ url_for('student_dashboard') }}" class="back">← Back to Dashboard</a>
+</div>
+</body>
+</html>

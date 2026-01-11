@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Enter Exam PIN</title>
+<style>
+body{font-family:Arial;background:#f4f6fb}
+.box{width:360px;margin:100px auto;background:#fff;padding:25px;border-radius:10px;box-shadow:0 0 10px #ccc;text-align:center}
+input{width:100%;padding:12px;margin-top:10px;border-radius:6px;border:1px solid #ccc;font-size:18px;text-align:center}
+button{width:100%;padding:12px;margin-top:15px;background:#007bff;color:#fff;border:none;border-radius:6px;font-size:16px}
+a{display:block;margin-top:10px;color:#007bff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>🔐 Enter Exam PIN</h2>
+<form method="POST">
+<input type="password" name="pin" maxlength="4" placeholder="****" required>
+<button type="submit">Verify PIN</button>
+</form>
+<a href="/exam/forgot-pin">Forgot PIN?</a>
+</div>
+</body>
+</html>

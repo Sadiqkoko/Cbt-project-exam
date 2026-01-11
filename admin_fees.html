@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Fees</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; background:#f4f6fb; margin:0; padding:0; }
+.container { width:90%; max-width:1200px; margin:30px auto; padding:20px; }
+h2 { color:#007BFF; text-align:center; margin-bottom:20px; }
+.form-section { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin-bottom:30px; }
+select, input[type="number"], input[type="text"], button { padding:10px 15px; font-size:16px; border-radius:6px; border:1px solid #ccc; }
+button { background:#007BFF; color:#fff; border:none; cursor:pointer; transition:0.3s; }
+button:hover { background:#0056b3; }
+
+/* Search box */
+.search-box { text-align:center; margin-bottom:20px; }
+.search-box input { padding:10px 15px; border-radius:25px; border:1px solid #ccc; width:250px; outline:none; }
+
+.cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:20px; }
+.card { background:#fff; padding:20px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); text-align:center; transition:0.3s; position:relative; }
+.card:hover { transform:translateY(-5px); box-shadow:0 10px 20px rgba(0,0,0,0.15); }
+.card img { width:80px; height:80px; border-radius:50%; margin-bottom:10px; object-fit:cover; }
+.status-paid { color:green; font-weight:600; }
+.status-pending { color:orange; font-weight:600; }
+.pay-btn { margin-top:10px; padding:8px 12px; background:#28a745; color:white; border:none; border-radius:8px; cursor:pointer; transition:0.3s; }
+.pay-btn:hover { background:#218838; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>💰 Admin Fees Management</h2>
+
+    <!-- Assign Fees Form -->
+    <form method="POST" class="form-section">
+        <select name="department" required>
+            <option value="" disabled selected>-- Select Department --</option>
+            {% for d in departments %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
+        </select>
+        <select name="level" required>
+            <option value="" disabled selected>-- Select Level --</option>
+            {% for l in levels %}<option value="{{ l }}">{{ l }}</option>{% endfor %}
+        </select>
+        <input type="number" name="amount" placeholder="Amount" required>
+        <input type="text" name="session" placeholder="Session (e.g., 2025/2026)">
+        <button type="submit">Assign Fees</button>
+    </form>
+
+    <!-- Search -->
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Search students by name, department, level, or status">
+    </div>
+
+    <!-- Fees Records -->
+    <div class="cards" id="feesCards">
+        {% for f in fees_records %}
+        <div class="card" data-fee-id="{{ f.id }}">
+            <img src="{{ url_for('static', filename='profile_pictures/' ~ (f.picture if f.picture else 'default.png')) }}" alt="{{ f.fullname }}">
+            <h3 class="student-name">{{ f.fullname }}</h3>
+            <p class="student-dept">Dept: {{ f.department }}</p>
+            <p class="student-level">Level: {{ f.level }}</p>
+            <p>Admission No: {{ f.admission_number }}</p>
+            <p>Amount: ₦{{ "%.2f"|format(f.amount) }}</p>
+            <p>Session: {{ f.session }}</p>
+            <p>Status: <span class="status-{{ f.status|lower }}">{{ f.status }}</span></p>
+            {% if f.date_paid %}<p>Paid on: {{ f.date_paid }}</p>{% endif %}
+            {% if f.status != "Paid" %}
+            <button class="pay-btn" onclick="markPaid({{ f.id }})">Mark as Paid</button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+// Live search for cards
+document.getElementById("searchInput").addEventListener("keyup", function(){
+    let filter = this.value.toLowerCase();
+    let cards = document.querySelectorAll("#feesCards .card");
+
+    cards.forEach(card => {
+        let name = card.querySelector(".student-name").innerText.toLowerCase();
+        let dept = card.querySelector(".student-dept").innerText.toLowerCase();
+        let level = card.querySelector(".student-level").innerText.toLowerCase();
+        let status = card.querySelector("span").innerText.toLowerCase();
+
+        let text = name + " " + dept + " " + level + " " + status;
+        card.style.display = text.includes(filter) ? "" : "none";
+    });
+});
+
+// Mark fee as paid using fetch (AJAX)
+function markPaid(feeId){
+    if(!confirm("Are you sure you want to mark this fee as Paid?")) return;
+
+    fetch("/admin/fees/mark_paid/" + feeId, { method:"POST" })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            let card = document.querySelector(".card[data-fee-id='"+feeId+"']");
+            card.querySelector("span").innerText = "Paid";
+            card.querySelector("span").className = "status-paid";
+            let btn = card.querySelector(".pay-btn");
+            if(btn) btn.remove();
+            if(data.date_paid){
+                let p = document.createElement("p");
+                p.innerText = "Paid on: " + data.date_paid;
+                card.appendChild(p);
+            }
+        } else {
+            alert("Failed to update fee status.");
+        }
+    });
+}
+</script>
+
+</body>
+</html>

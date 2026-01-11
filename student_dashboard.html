@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Dashboard - Alhuda Cyber Cafe Academy</title>
+
+<style>
+:root{
+  --primary:#2563eb;
+  --secondary:#1e40af;
+  --bg:#f1f5f9;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial,sans-serif;
+  background:linear-gradient(135deg,#eef2ff,#f8fafc);
+  transition:.3s;
+}
+
+/* ================= HEADER ================= */
+header{
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color:white;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+header h1{
+  margin:0;
+  font-size:20px;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.toggle{
+  cursor:pointer;
+  font-size:22px;
+}
+
+/* ================= PROFILE DROPDOWN ================= */
+.profile-dropdown{position:relative;}
+.profile-dropdown img{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  cursor:pointer;
+  border:2px solid #fff;
+}
+.dropdown-content{
+  display:none;
+  position:absolute;
+  right:0;
+  top:60px;
+  background:white;
+  min-width:170px;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+.dropdown-content a{
+  padding:14px 18px;
+  display:block;
+  text-decoration:none;
+  color:#333;
+  font-weight:500;
+}
+.dropdown-content a:hover{background:#f1f5f9;}
+.profile-dropdown:hover .dropdown-content{display:block;}
+
+/* ================= WELCOME BANNER ================= */
+.welcome{
+  width:90%;
+  max-width:1200px;
+  margin:25px auto;
+  background:linear-gradient(135deg,#dbeafe,#eff6ff);
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+.welcome h2{margin:0;color:#1e3a8a;}
+.welcome p{margin-top:8px;color:#334155;}
+
+/* ================= DASHBOARD CARDS ================= */
+.container{
+  width:90%;
+  max-width:1200px;
+  margin:30px auto 60px auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:25px;
+}
+
+.card{
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(8px);
+  padding:40px 25px;
+  border-radius:22px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 20px 40px rgba(0,0,0,.08);
+  transition:.4s ease;
+}
+
+.card:hover{
+  transform:translateY(-10px) scale(1.04);
+  box-shadow:0 30px 60px rgba(0,0,0,.18);
+}
+
+.card span{
+  font-size:60px;
+}
+
+.card h3{
+  margin:18px 0 0 0;
+  font-size:18px;
+  color:var(--primary);
+}
+
+.card p{
+  margin-top:8px;
+  font-size:14px;
+  color:#64748b;
+}
+
+/* ================= DARK MODE ================= */
+body.dark{
+  background:linear-gradient(135deg,#020617,#020617);
+  color:#e5e7eb;
+}
+
+body.dark header{
+  background:linear-gradient(135deg,#020617,#020617);
+}
+
+body.dark .welcome{
+  background:linear-gradient(135deg,#020617,#020617);
+}
+
+body.dark .card{
+  background:rgba(15,23,42,.9);
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
+}
+
+body.dark .card h3{color:#e5e7eb;}
+body.dark .card p{color:#cbd5f5;}
+
+body.dark .dropdown-content{
+  background:#020617;
+}
+body.dark .dropdown-content a{color:#e5e7eb;}
+body.dark .dropdown-content a:hover{background:#020617;}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:600px){
+  header h1{font-size:16px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <h1>🎓 Alhuda Cyber Cafe Academy</h1>
+
+  <div class="header-right">
+    <span class="toggle" onclick="toggleMode()" id="modeIcon">🌙</span>
+
+    <div class="profile-dropdown">
+      <img src="{{ url_for('static', filename='profile_pictures/' + student['picture']) }}">
+      <div class="dropdown-content">
+        <a href="{{ url_for('view_profile') }}">👤 My Profile</a>
+        <a href="{{ url_for('logout') }}">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= WELCOME ================= -->
+<div class="welcome">
+  <h2>Welcome, {{ student['fullname'] }} 👋</h2>
+  <p>Admission No: <b>{{ student['admission_number'] }}</b>  
+  | Level: <b>{{ student['level'] }}</b>  
+  | Department: <b>{{ student['department'] }}</b></p>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div class="container">
+
+  <div class="card" onclick="location.href='{{ url_for('view_profile') }}'">
+    <span>👤</span>
+    <h3>My Profile</h3>
+    <p>View & update your info</p>
+  </div>
+
+  <div class="card" onclick="location.href='{{ url_for('exam_pin') }}'">
+    <span>📝</span>
+    <h3>Take Exam</h3>
+    <p>Enter exam & submit</p>
+  </div>
+
+  <div class="card" onclick="location.href='{{ url_for('view_results') }}'">
+    <span>📊</span>
+    <h3>Results</h3>
+    <p>Check your performance</p>
+  </div>
+
+  <div class="card" onclick="location.href='{{ url_for('payment_invoice') }}'">
+    <span>💰</span>
+    <h3>Fees & Invoice</h3>
+    <p>Payments & receipts</p>
+  </div>
+
+  <div class="card" onclick="location.href='{{ url_for('change_password_request') }}'">
+    <span>🔑</span>
+    <h3>Password</h3>
+    <p>Request password change</p>
+  </div>
+
+</div>
+
+<!-- ================= JS ================= -->
+<script>
+function toggleMode(){
+  document.body.classList.toggle("dark");
+  if(document.body.classList.contains("dark")){
+    localStorage.setItem("mode","dark");
+    document.getElementById("modeIcon").innerHTML="☀️";
+  }else{
+    localStorage.setItem("mode","light");
+    document.getElementById("modeIcon").innerHTML="🌙";
+  }
+}
+window.onload=function(){
+  if(localStorage.getItem("mode")==="dark"){
+    document.body.classList.add("dark");
+    document.getElementById("modeIcon").innerHTML="☀️";
+  }
+}
+</script>
+
+</body>
+</html>

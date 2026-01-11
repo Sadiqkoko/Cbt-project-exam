@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Alhuda Cyber Cafe Academy - CBT Portal</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: #fff;
+}
+
+.header {
+    text-align: center;
+    padding: 50px 20px 20px 20px;
+}
+
+.header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.header p {
+    font-size: 1.2em;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    margin: 50px 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.button {
+    background-color: #fff;
+    color: #2575fc;
+    padding: 20px 40px;
+    text-decoration: none;
+    font-size: 1.2em;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.button:hover {
+    background-color: #f4f4f4;
+    transform: translateY(-5px);
+}
+
+.historical {
+    max-width: 800px;
+    margin: 50px auto;
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 10px;
+    line-height: 1.6em;
+}
+
+.historical h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+@media screen and (max-width: 600px){
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+</head>
+<body>
+<div class="header">
+    <h1>Alhuda Cyber Cafe Academy</h1>
+    <p>Welcome to our CBT Portal. Here, students can take computer-based tests, view their results, and manage their learning efficiently. Alhuda Cyber Cafe Academy is committed to quality education and empowering students for the future.</p>
+</div>
+
+<div class="container">
+    <a href="{{ url_for('register') }}" class="button">Register</a>
+    <a href="{{ url_for('login') }}" class="button">Login</a>
+</div>
+
+<div class="historical">
+    <h2>About Our CBT Portal</h2>
+    <p>
+        Alhuda Cyber Cafe Academy has been pioneering computer-based testing in the region. Our CBT portal is designed to provide students with a smooth and secure environment for examinations. 
+        Historical data, results, and performance tracking are all seamlessly integrated. Our platform supports students from multiple faculties and departments, ensuring standardized assessment for every candidate.
+    </p>
+    <p>
+        By adopting modern CBT technology, Alhuda Cyber Cafe Academy ensures fairness, transparency, and efficiency. Students can register, login, and access their dashboard where they can take exams, track results, and request password resets securely.
+    </p>
+</div>
+</body>
+</html>

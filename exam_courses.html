@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Select Course</title>
+<style>
+body{font-family:Arial;background:#f4f6fb}
+.container{width:600px;margin:50px auto}
+.card{background:#fff;padding:15px;margin:10px 0;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
+button{padding:8px 15px;background:#007bff;color:#fff;border:none;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>📚 Select Course</h2>
+
+<form method="POST">
+{% for c in courses %}
+<div class="card">
+<b>{{ c.course_code }}</b>
+<button name="course_id" value="{{ c.id }}">Next</button>
+</div>
+{% endfor %}
+</form>
+
+</div>
+</body>
+</html>
